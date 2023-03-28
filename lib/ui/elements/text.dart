@@ -85,8 +85,14 @@ final SurveyFormControlBuilder textControlBuilder =
     return FormControl<String>(validators: [...validators, Validators.email]);
   }
   if (e.inputType == 'number') {
-    return FormControl<num>(
-        validators: [...validators, NullableNumberValidator().validate]);
+    final vals = [...validators, NullableValidators.number];
+    if (e.min != null) {
+      vals.add(NullableValidators.min(e.min));
+    }
+    if (e.max != null) {
+      vals.add(NullableValidators.max(e.max));
+    }
+    return FormControl<num>(validators: vals);
   }
   return FormControl<String>(validators: validators);
 };

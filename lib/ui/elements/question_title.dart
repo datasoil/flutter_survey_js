@@ -57,30 +57,37 @@ class QuestionTitle extends StatelessWidget {
         return Container();
       }));
 
+      listTitle.add(Text(
+        '${q.title ?? q.name ?? ""}',
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            ?.copyWith(fontWeight: FontWeight.w500),
+      ));
+
       if (q.isRequired == true) {
-        listTitle.add(Text(
-          '* ',
-          style: requiredTextStyle,
+        listTitle.add(Padding(
+          padding: const EdgeInsets.only(left: 2),
+          child: Text(
+            '* ',
+            style: requiredTextStyle,
+          ),
         ));
       }
 
-      listTitle.add(Expanded(
-          child: Text(
-        '${q.title ?? q.name ?? ""}',
-        style: titleTextStyle(),
-      )));
-
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: listTitle),
-          description(),
-        ],
-      );
+      return Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: listTitle),
+              description(),
+            ],
+          ));
     };
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,

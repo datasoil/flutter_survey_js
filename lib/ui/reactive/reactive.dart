@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:reactive_forms/reactive_forms.dart';
 
 class NumStringValueAccessor extends ControlValueAccessor<num, String> {
@@ -8,10 +10,9 @@ class NumStringValueAccessor extends ControlValueAccessor<num, String> {
 
   @override
   num? viewToModelValue(String? viewValue) {
-    print(viewValue);
-    return viewValue == null
+    return viewValue == null || viewValue.length == 0
         ? null
-        : num.tryParse(viewValue.replaceAll(',', '.'));
+        : num.tryParse(viewValue.replaceAll(',', '.')) ?? double.nan;
   }
 }
 

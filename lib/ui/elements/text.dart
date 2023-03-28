@@ -65,6 +65,10 @@ final SurveyElementBuilder textBuilder =
       keyboardType: TextInputType.number,
       formControlName: element.name!,
       valueAccessor: NumStringValueAccessor(),
+      decoration: InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+          border: OutlineInputBorder()),
     );
   }
   return widget.wrapQuestionTitle(element, hasTitle: hasTitle);

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_survey_js/survey.dart' as s;
 import 'package:flutter_survey_js/ui/elements/survey_element_factory.dart';
-import 'package:flutter_survey_js/ui/survey_widget.dart';
 import 'package:logging/logging.dart';
 
 class CustomLayoutPage extends StatelessWidget {
@@ -20,39 +19,52 @@ class CustomLayoutPage extends StatelessWidget {
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
-                : s.SurveyWidget(
-                    showQuestionsInOnePage: true,
-                    survey: survey!,
-                    onChange: (v) {
-                      print(v);
-                    },
-                    builder: (context) => CustomLayout(),
-                    onSubmit: (v) {
-                      print(v);
-                      showModalBottomSheet<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Container(
-                            height: 400,
-                            child: Center(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Expanded(
-                                      child: Container(
-                                          child: SingleChildScrollView(
-                                              child: Text(v.toString())))),
-                                  ElevatedButton(
-                                    child: const Text('Close'),
-                                    onPressed: () => Navigator.pop(context),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                : SingleChildScrollView(
+                    child: Container(
+                      color: Colors.grey[200],
+                      padding: EdgeInsets.fromLTRB(
+                          12, 12, 12, MediaQuery.of(context).padding.bottom),
+                      child: Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.all(8),
+                        child: s.SurveyWidget(
+                          showQuestionsInOnePage: true,
+                          validationMessages: {
+                            s.ValidationMessage.required: (error) => 'ORCIODIO',
+                          },
+                          survey: survey!,
+                          builder: (context) => CustomLayout(),
+                          onSubmit: (v) {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Container(
+                                  height: 400,
+                                  child: Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Expanded(
+                                            child: Container(
+                                                child: SingleChildScrollView(
+                                                    child:
+                                                        Text(v.toString())))),
+                                        ElevatedButton(
+                                          child: const Text('Close'),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   )));
   }
 }
@@ -67,7 +79,7 @@ class CustomLayout extends StatefulWidget {
 class CustomLayoutState extends State<CustomLayout> {
   final Logger logger = Logger('CustomLayoutState');
 
-  s.Survey get survey => SurveyProvider.of(context).survey;
+  s.Survey get survey => s.SurveyProvider.of(context).survey;
 
   @override
   void initState() {
@@ -77,7 +89,7 @@ class CustomLayoutState extends State<CustomLayout> {
   @override
   Widget build(BuildContext context) {
     final pages = _reCalculatePages(
-        SurveyProvider.of(context).showQuestionsInOnePage, survey);
+        s.SurveyProvider.of(context).showQuestionsInOnePage, survey);
     assert(pages.length == 1);
     IndexedWidgetBuilder itemBuilder(s.Page page) {
       return (context, index) {
@@ -91,11 +103,8 @@ class CustomLayoutState extends State<CustomLayout> {
       };
     }
 
-    final IndexedWidgetBuilder separatorBuilder =
-        (BuildContext context, int index) {
-      return SurveyElementFactory().separatorBuilder.call(context);
-    };
     return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -103,7 +112,7 @@ class CustomLayoutState extends State<CustomLayout> {
             fit: FlexFit.loose,
             child: ListView.separated(
               itemBuilder: itemBuilder(pages[0]),
-              separatorBuilder: separatorBuilder,
+              separatorBuilder: (context, i) => SizedBox(height: 12),
               itemCount: pages[0].elements?.length ?? 0,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,

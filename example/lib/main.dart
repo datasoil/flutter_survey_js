@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
 
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,12 +11,7 @@ import 'components/custom_layout.dart';
 import 'components/simple.dart';
 
 void main() {
-  runApp(
-    DevicePreview(
-      enabled: true,
-      builder: (context) => MyApp(), // Wrap your app
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -25,9 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      locale: DevicePreview.locale(context),
-      // Add the locale here
-      builder: DevicePreview.appBuilder,
+      locale: Locale('en', ''),
       // Add the builder here
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
@@ -83,6 +75,9 @@ class _MyHomePageState extends State<MyHomePage> {
       rootBundle.loadString('assets/single_page.json').then((value) {
         _surveyMap["Single Page"] = JsonElement.format(value);
       }),
+      rootBundle.loadString('assets/simple.json').then((value) {
+        _surveyMap["Simple"] = JsonElement.format(value);
+      }),
     ]);
     super.initState();
   }
@@ -116,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           )
                         },
                         child: Text(
-                          'Simple',
+                          'Normal view',
                         ),
                       ),
                       ElevatedButton(
@@ -130,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           )
                         },
                         child: Text(
-                          'Customize',
+                          'Custom view',
                         ),
                       ),
                     ],

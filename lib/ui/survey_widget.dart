@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,14 @@ import 'form_control.dart';
 final defaultBuilder = (BuildContext context) {
   return SurveyLayout();
 };
+final defaultValidationMessages = {
+  ValidationMessage.required: (error) => 'Campo obbligatorio.',
+  ValidationMessage.number: (error) => 'Il valore inserito non è un numero.',
+  ValidationMessage.min: (error) =>
+      'Il valore deve essere maggiore di ${(error as Map)['min']}',
+  ValidationMessage.max: (error) =>
+      'Il valore deve essere minore di ${(error as Map)['max']}',
+};
 
 typedef SurveyBuilder = Widget Function(BuildContext context);
 
@@ -24,17 +33,19 @@ class SurveyWidget extends StatefulWidget {
   final bool showQuestionsInOnePage;
   final SurveyController? controller;
   final SurveyBuilder? builder;
+  final Map<String, String Function(Object)>? validationMessages;
 
-  const SurveyWidget({
-    Key? key,
-    required this.survey,
-    this.answer,
-    this.onSubmit,
-    this.onChange,
-    this.controller,
-    this.builder,
-    this.showQuestionsInOnePage = false,
-  }) : super(key: key);
+  const SurveyWidget(
+      {Key? key,
+      required this.survey,
+      this.answer,
+      this.onSubmit,
+      this.onChange,
+      this.controller,
+      this.builder,
+      this.showQuestionsInOnePage = false,
+      this.validationMessages})
+      : super(key: key);
   @override
   State<StatefulWidget> createState() => SurveyWidgetState();
 }
@@ -88,24 +99,28 @@ class SurveyWidgetState extends State<SurveyWidget> {
     }
     final elementsState = ElementsState(status);
 
-    return ReactiveForm(
-      formGroup: this.formGroup,
-      child: StreamBuilder(
-        stream: this.formGroup.valueChanges,
-        builder: (BuildContext context,
-            AsyncSnapshot<Map<String, Object?>?> snapshot) {
-          return SurveyProvider(
-            survey: widget.survey,
-            formGroup: formGroup,
-            elementsState: elementsState,
-            currentPage: currentPage,
-            initialPage: initialPage,
-            showQuestionsInOnePage: widget.showQuestionsInOnePage,
-            child: Builder(
-                builder: (context) =>
-                    (widget.builder ?? defaultBuilder)(context)),
-          );
-        },
+    return ReactiveFormConfig(
+      validationMessages:
+          widget.validationMessages ?? defaultValidationMessages,
+      child: ReactiveForm(
+        formGroup: this.formGroup,
+        child: StreamBuilder(
+          stream: this.formGroup.valueChanges,
+          builder: (BuildContext context,
+              AsyncSnapshot<Map<String, Object?>?> snapshot) {
+            return SurveyProvider(
+              survey: widget.survey,
+              formGroup: formGroup,
+              elementsState: elementsState,
+              currentPage: currentPage,
+              initialPage: initialPage,
+              showQuestionsInOnePage: widget.showQuestionsInOnePage,
+              child: Builder(
+                  builder: (context) =>
+                      (widget.builder ?? defaultBuilder)(context)),
+            );
+          },
+        ),
       ),
     );
   }

@@ -230,13 +230,13 @@ class Text extends Question {
   // "onTyping"
   String? textUpdateMode;
   String? autoComplete;
-  String? min;
-  String? max;
+  num? min;
+  num? max;
   String? minValueExpression;
   String? maxValueExpression;
   String? minErrorText;
   String? maxErrorText;
-  int? step;
+  num? step;
   int? maxLength;
   String? placeHolder;
   List<String>? dataList;

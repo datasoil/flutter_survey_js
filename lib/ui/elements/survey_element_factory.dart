@@ -129,9 +129,8 @@ class SurveyElementFactory {
           ));
     });
 
-    unsupported = (context, element, {bool hasTitle = true}) => Container(
-          child: Text('Unsupported ${element.name ?? ""}'),
-        ).wrapQuestionTitle(element, hasTitle: hasTitle);
+    unsupported =
+        (context, element, {bool hasTitle = true}) => SizedBox.shrink();
   }
 
   SurveyElementBuilder? unsupported;
